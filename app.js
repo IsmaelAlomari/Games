@@ -1,12 +1,23 @@
-const products = require("../data")
 const express = require("express");
+const productRoutes = require("./routes/productRoutes")
 
 const app = express();
 
-app.listen(8000, () => {
+
+app.use(express.json())
+
+app.use("/products",productRoutes)
+
+
+ app.listen(8000, () => {
     console.log("The application is running on localhost:8000");
   });
 
-  app.get("/products", (req, res) => {
-    res.json({products});
-  });
+
+
+  
+
+
+
+
+ 
