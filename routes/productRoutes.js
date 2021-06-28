@@ -1,17 +1,36 @@
-const express = require ("express")
-const products = require("../data")
-const router = express.Router()
+const express = require("express");
+const upload = require("../middleware/multer");
+const router = express.Router();
 
-const {productsCreate , productsDelete ,productsList ,productsDetails} = require("../productsControllers/productsControllers")
+const {
+  productsCreate,
+  productsDelete,
+  productsList,
+  productsDetails,
+  updateProduct,
+  fetchProduct,
+} = require("../productsControllers/productsControllers");
 
+router.param("productId", async (req, res, next, productId) => {
+  const product = await fetchProduct(productId, next);
+  if (product) {
+    req.product = product;
+    next();
+  } else {
+    const err = new Error("Product Not Found");
+    err.status = 404;
+    next(err);
+  }
+});
 
 router.get("/", productsList);
 
+router.post("/", productsCreate);
 
-router.post("/",productsCreate)
-  
-  router.get("/:productId",productsDetails  )
+router.get("/:productId", productsDetails);
 
-    router.delete("/:productId" ,productsDelete)
+router.delete("/:productId", productsDelete);
 
-    module.exports = router;
+router.put("/:productId", upload.single("image"), updateProduct);
+
+module.exports = router;
